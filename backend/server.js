@@ -224,12 +224,14 @@ app.post("/employee", (req, res) => {
     ],
     function(err){
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json({
         success:true,
@@ -251,12 +253,14 @@ app.get("/employees",(req,res)=>{
     [],
     (err,rows)=>{
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json(rows);
 
@@ -576,6 +580,9 @@ app.get("/attendance/:id", (req, res) => {
 
 app.post("/attendance", (req, res) => {
 
+    console.log("POST /attendance called");
+console.log(req.body);
+
   const {
     employee_id,
     attendance_date,
@@ -583,6 +590,8 @@ app.post("/attendance", (req, res) => {
     logout_time,
     status
   } = req.body;
+
+  console.log(req.body);
 
   db.run(
     `INSERT INTO attendance
@@ -597,12 +606,14 @@ app.post("/attendance", (req, res) => {
     ],
     function(err){
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json({
         success:true,
@@ -614,7 +625,6 @@ app.post("/attendance", (req, res) => {
   );
 
 });
-
 
 // ================= UPDATE ATTENDANCE =================
 
@@ -881,12 +891,14 @@ app.post("/payroll", (req, res) => {
     ],
     function(err){
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json({
         success:true,
@@ -931,12 +943,14 @@ app.put("/payroll/:id",(req,res)=>{
     ],
     function(err){
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json({
         success:true,
@@ -957,12 +971,14 @@ app.delete("/payroll/:id",(req,res)=>{
     [req.params.id],
     function(err){
 
-      if(err){
-        return res.status(500).json({
-          success:false,
-          message:err.message
-        });
-      }
+      if (err) {
+  console.log("SQL ERROR:", err);
+
+  return res.status(500).json({
+    success: false,
+    message: err.message
+  });
+}
 
       res.json({
         success:true,

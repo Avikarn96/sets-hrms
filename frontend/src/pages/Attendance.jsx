@@ -25,8 +25,13 @@ const Attendance = () => {
       const res = await api.get("/employees");
       setEmployees(res.data);
     } catch (err) {
-      console.log(err);
-    }
+  console.log(err);
+  console.log(err.response);
+
+  alert(
+    err.response?.data?.message || "Error saving attendance"
+  );
+}
   };
 
   const loadAttendance = async () => {
@@ -38,8 +43,13 @@ const Attendance = () => {
 
       setAttendance(res.data);
     } catch (err) {
-      console.log(err);
-    }
+  console.log(err);
+  console.log(err.response);
+
+  alert(
+    err.response?.data?.message || "Error saving attendance"
+  );
+}
   };
 
   const handleChange = (e) => {
@@ -63,9 +73,13 @@ const Attendance = () => {
       setEditingId(null);
       loadAttendance();
     } catch (err) {
-      console.log(err);
-      alert("Error saving attendance");
-    }
+  console.log(err);
+  console.log(err.response);
+
+  alert(
+    err.response?.data?.message || "Error saving attendance"
+  );
+}
   };
 
   const editAttendance = (row) => {
@@ -86,8 +100,13 @@ const Attendance = () => {
       alert(res.data.message);
       loadAttendance();
     } catch (err) {
-      console.log(err);
-    }
+  console.log(err);
+  console.log(err.response);
+
+  alert(
+    err.response?.data?.message || "Error saving attendance"
+  );
+}
   };
 
   const filteredAttendance = attendance.filter((row) =>
