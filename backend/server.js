@@ -533,26 +533,76 @@ app.delete("/department/:id", (req, res) => {
 // ================= GET ALL ATTENDANCE =================
 
 app.get("/attendance", (req, res) => {
-  db.all(
-    `SELECT attendance.*,
-            employees.name,
-            employees.empid
-     FROM attendance
-     LEFT JOIN employees
-     ON attendance.employee_id = employees.id
-     ORDER BY attendance.id DESC`,
-    [],
-    (err, rows) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          message: err.message,
-        });
-      }
 
-      res.json(rows);
-    }
-  );
+    const sql = `
+        SELECT
+            attendance.id,
+            attendance.employee_id,
+            employees.name AS employee_name,
+            attendance.date,
+            attendance.login_time,
+            attendance.logout_time,
+            attendance.status
+        FROM attendance
+        LEFT JOIN employees
+        ON attendance.employee_id = employees.id
+        ORDER BY attendance.date DESC
+    `;
+
+    db.all(sql, [], (err, rows) => {
+
+        if (err) {
+            console.log(err);
+
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        res.json(rows);
+
+    });
+
+});
+
+
+// ================= GET ATTENDANCE BY ID =================
+
+app.get("/attendance/:id", (req, res) => {
+
+    db.get(
+        `
+        SELECT
+            attendance.id,
+            attendance.employee_id,
+            employees.name AS employee_name,
+            attendance.date,
+            attendance.login_time,
+            attendance.logout_time,
+            attendance.status
+        FROM attendance
+        LEFT JOIN employees
+        ON attendance.employee_id = employees.id
+        WHERE attendance.id=?
+        `,
+        [req.params.id],
+
+        (err, row) => {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
+
+            res.json(row);
+
+        }
+
+    );
+
 });
 
 
@@ -580,115 +630,143 @@ app.get("/attendance/:id", (req, res) => {
 
 app.post("/attendance", (req, res) => {
 
-    console.log("POST /attendance called");
-console.log(req.body);
+    const {
+        employee_id,
+        attendance_date,
+        login_time,
+        logout_time,
+        status
+    } = req.body;
 
-  const {
-    employee_id,
-    attendance_date,
-    login_time,
-    logout_time,
-    status
-  } = req.body;
+    db.run(
+        `
+        INSERT INTO attendance
+        (
+            employee_id,
+            date,
+            login_time,
+            logout_time,
+            status
+        )
+        VALUES (?,?,?,?,?)
+        `,
+        [
+            employee_id,
+            attendance_date,
+            login_time || "",
+            logout_time || "",
+            status
+        ],
 
-  console.log(req.body);
+        function(err){
 
-  db.run(
-    `INSERT INTO attendance
-    (employee_id,date,login_time,logout_time,status)
-    VALUES(?,?,?,?,?)`,
-    [
-      employee_id,
-      attendance_date,
-      login_time,
-      logout_time,
-      status
-    ],
-    function(err){
+            if(err){
 
-      if (err) {
-  console.log("SQL ERROR:", err);
+                console.log(err);
 
-  return res.status(500).json({
-    success: false,
-    message: err.message
-  });
-}
+                return res.status(500).json({
+                    success:false,
+                    message:err.message
+                });
 
-      res.json({
-        success:true,
-        message:"Attendance Added Successfully",
-        id:this.lastID
-      });
+            }
 
-    }
-  );
+            res.json({
+                success:true,
+                message:"Attendance Added Successfully",
+                id:this.lastID
+            });
+
+        }
+
+    );
 
 });
+
 
 // ================= UPDATE ATTENDANCE =================
 
-app.put("/attendance/:id", (req, res) => {
-  const {
-    employee_id,
-    attendance_date,
-    login_time,
-    logout_time,
-    status,
-  } = req.body;
+app.put("/attendance/:id", (req,res)=>{
 
-  db.run(
-    `UPDATE attendance
-     SET employee_id=?,
-         attendance_date=?,
-         login_time=?,
-         logout_time=?,
-         status=?
-     WHERE id=?`,
-    [
-      employee_id,
-      attendance_date,
-      login_time,
-      logout_time,
-      status,
-      req.params.id,
-    ],
-    function (err) {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          message: err.message,
-        });
-      }
+    const {
+        employee_id,
+        attendance_date,
+        login_time,
+        logout_time,
+        status
+    } = req.body;
 
-      res.json({
-        success: true,
-        message: "Attendance updated successfully",
-      });
-    }
-  );
+    db.run(
+        `
+        UPDATE attendance
+        SET
+            employee_id=?,
+            date=?,
+            login_time=?,
+            logout_time=?,
+            status=?
+        WHERE id=?
+        `,
+        [
+            employee_id,
+            attendance_date,
+            login_time || "",
+            logout_time || "",
+            status,
+            req.params.id
+        ],
+
+        function(err){
+
+            if(err){
+
+                return res.status(500).json({
+                    success:false,
+                    message:err.message
+                });
+
+            }
+
+            res.json({
+                success:true,
+                message:"Attendance Updated Successfully"
+            });
+
+        }
+
+    );
+
 });
+
 
 // ================= DELETE ATTENDANCE =================
 
-app.delete("/attendance/:id", (req, res) => {
-  db.run(
-    "DELETE FROM attendance WHERE id=?",
-    [req.params.id],
-    function (err) {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          message: err.message,
-        });
-      }
+app.delete("/attendance/:id",(req,res)=>{
 
-      res.json({
-        success: true,
-        message: "Attendance deleted successfully",
-      });
-    }
-  );
+    db.run(
+        "DELETE FROM attendance WHERE id=?",
+        [req.params.id],
+
+        function(err){
+
+            if(err){
+
+                return res.status(500).json({
+                    success:false,
+                    message:err.message
+                });
+
+            }
+
+            res.json({
+                success:true,
+                message:"Attendance Deleted Successfully"
+            });
+
+        }
+
+    );
+
 });
 
 // ================= GET ALL LEAVES =================
