@@ -595,7 +595,7 @@ console.log(req.body);
 
   db.run(
     `INSERT INTO attendance
-    (employee_id,attendance_date,login_time,logout_time,status)
+    (employee_id,date,login_time,logout_time,status)
     VALUES(?,?,?,?,?)`,
     [
       employee_id,
