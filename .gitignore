@@ -1,0 +1,19 @@
+# Node modules
+backend/node_modules/
+frontend/node_modules/
+
+# Logs
+*.log
+
+# Environment files
+.env
+
+# Database temporary files
+*.db-journal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
