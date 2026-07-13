@@ -21,13 +21,25 @@ const Attendance = () => {
   }, []);
 
   const loadEmployees = async () => {
-    const res = await api.get("/employees");
-    setEmployees(res.data);
+    try {
+      const res = await api.get("/employees");
+      setEmployees(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const loadAttendance = async () => {
-    const res = await api.get("/attendance");
-    setAttendance(res.data);
+    try {
+      const res = await api.get("/attendance");
+
+      // Check what backend returns
+      console.log("Attendance Data:", res.data);
+
+      setAttendance(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleChange = (e) => {
@@ -69,9 +81,13 @@ const Attendance = () => {
   const deleteAttendance = async (id) => {
     if (!window.confirm("Delete attendance record?")) return;
 
-    const res = await api.delete(`/attendance/${id}`);
-    alert(res.data.message);
-    loadAttendance();
+    try {
+      const res = await api.delete(`/attendance/${id}`);
+      alert(res.data.message);
+      loadAttendance();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const filteredAttendance = attendance.filter((row) =>
@@ -172,7 +188,10 @@ const Attendance = () => {
               <tr key={row.id}>
                 <td>{row.id}</td>
                 <td>{row.empid} - {row.name}</td>
-                <td>{row.attendance_date}</td>
+
+                {/* Date */}
+                <td>{row.attendance_date || "No Date"}</td>
+
                 <td>{row.status}</td>
 
                 <td>

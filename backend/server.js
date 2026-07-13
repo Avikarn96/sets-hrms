@@ -57,7 +57,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS attendance(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employee_id INTEGER,
-      date TEXT,
+      attendance_date TEXT,
       login_time TEXT,
       logout_time TEXT,
       status TEXT
@@ -578,7 +578,7 @@ app.post("/attendance", (req, res) => {
 
   const {
     employee_id,
-    date,
+    attendance_date,
     login_time,
     logout_time,
     status
@@ -586,11 +586,11 @@ app.post("/attendance", (req, res) => {
 
   db.run(
     `INSERT INTO attendance
-    (employee_id,date,login_time,logout_time,status)
+    (employee_id,attendance_date,login_time,logout_time,status)
     VALUES(?,?,?,?,?)`,
     [
       employee_id,
-      date,
+      attendance_date,
       login_time,
       logout_time,
       status
@@ -622,7 +622,7 @@ app.put("/attendance/:id",(req,res)=>{
 
   const{
     employee_id,
-    date,
+    attendance_date,
     login_time,
     logout_time,
     status
@@ -631,14 +631,14 @@ app.put("/attendance/:id",(req,res)=>{
   db.run(
     `UPDATE attendance
     SET employee_id=?,
-        date=?,
+        attendance_date=?,
         login_time=?,
         logout_time=?,
         status=?
     WHERE id=?`,
     [
       employee_id,
-      date,
+      attendance_date,
       login_time,
       logout_time,
       status,
